@@ -69,11 +69,6 @@ namespace dynamic_shortest_path {
 		for(std::vector<std::vector<float> >::reverse_iterator row = this->graph.rbegin() + 1; row != this->graph.rend(); ++row)
 		{
 			std::vector<float> parents = this->get_parents(max_index, row->begin());
-			for(std::vector<int>::size_type i = 0; i != parents.size(); i++)
-			{
-				std::cout<<parents[i]<<"\n";
-			}
-			std::cout<<"\nP SIZE: " <<parents.size()<< "\n";
 			std::reverse(parents.begin(), parents.end());
 			max_index -= this->get_max_index(parents);
 			path.append(max_index);
