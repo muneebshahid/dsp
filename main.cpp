@@ -39,7 +39,7 @@ std::vector<std::vector<float> > read_graph()
 int main()
 {
 	std::vector<std::vector<float> > lines = read_graph();
-	Dsp path(3, .05, .7, 4, lines[0].size());
+	Dsp path(3, .05, 4, lines[0].size());
 	for(std::vector<int>::size_type i = 0; i != lines.size(); i++)
 	{
 		path.forward(lines[i]);
@@ -51,3 +51,15 @@ int main()
 	return 0;
 }
 
+
+//.8 .9 .9 .6 .5 .5 .3 .2 .1
+//.1 .3 .7 .8 .9 .7 .7 .5 .3
+//.5 .5 .6 .7 .9 .8 .7 .5 .5
+//.3 .4 .5 .5 .7 .9 .7 .1 .3
+//.5 .4 .5 .6 .8 .7 .9 .1 .2
+//.3 .4 .6 .7 .8 .9 .6 .6 .5
+//.3 .6 .7 .5 .7 .8 .8 .7 .3
+//.1 .3 .2 .2 .4 .7 .9 .8 .7
+//.9 .8 .7 .2 .3 .2 .1 .1 .1
+//.9 .8 .7 .7 .2 .2 .2 .1 .1
+//.9 .9 .7 .6 .3 .2 .2 .2 .1

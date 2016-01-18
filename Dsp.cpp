@@ -32,15 +32,10 @@ namespace dynamic_shortest_path
 	}
 
 
-	void Dsp::update_scores(std::vector<float> edges)
+	void Dsp::update_graph(std::vector<float> nodes, std::vector<float> edges)
 	{
-		std::vector<float> nodes;
-		for(std::vector<int>::size_type i = 0; i != edges.size(); i++)
-		{
-			std::vector<float> parents = this->get_parents(i, this->graph.back().begin());
-			nodes.push_back(*std::max_element(parents.begin(), parents.end()) + edges[i]);
-		}
-		this->graph.push_back(nodes);
+		this->nodes.push_back(nodes);
+		this->edges.push_back(edges);
 	}
 
 	void Dsp::forward(std::vector<float> new_edges)
@@ -51,25 +46,37 @@ namespace dynamic_shortest_path
 		}
 		else
 		{
-			if (this->graph.size() > 0)
+			if (this->nodes.size() > 0)
 			{
-				this->update_scores(new_edges);
+				std::vector<float> nodes;
+				for(std::vector<int>::size_type i = 0; i != new_edges.size(); i++)
+				{
+					std::vector<float> parents = this->get_parents(i, this->nodes.back().begin());
+					nodes.push_back(*std::max_element(parents.begin(), parents.end()) + new_edges[i]);
+				}
+				this->update_graph(nodes, new_edges);
 			}
 			else
 			{
-				this->graph.push_back(new_edges);
+				this->update_graph(new_edges, new_edges);
 			}
 		}
 	}
 
 	Path Dsp::backward()
 	{
+		return this->backward(1);
+	}
+
+	Path Dsp::backward(int path_num)
+	{
 		Path path;
-		int max_index = get_max_index(this->graph.size() - 1);
+		int last_row = this->nodes.size() - 1;
+		int max_index = get_max_index(last_row);
 		path.append(max_index);
-		for(std::vector<std::vector<float> >::reverse_iterator row = this->graph.rbegin() + 1; row != this->graph.rend(); ++row)
+		for (int row = last_row - 1; row >= 0; row--)
 		{
-			std::vector<float> parents = this->get_parents(max_index, row->begin());
+			std::vector<float> parents = this->get_parents(max_index, this->nodes[row].begin());
 			std::reverse(parents.begin(), parents.end());
 			max_index -= this->get_max_index(parents);
 			path.append(max_index);
@@ -79,14 +86,14 @@ namespace dynamic_shortest_path
 
 	int Dsp::get_max_index(int row_num)
 	{
-		return this->get_max_index(this->graph[row_num]);
+		return this->get_max_index(this->nodes[row_num]);
 	}
 
 	int Dsp::get_max_index(std::vector<float> row)
 	{
 		int index = 0;
-		float max = row[0];
-		for(std::vector<float>::size_type i = 1; i != row.size(); i++)
+		float max = 0;
+		for(std::vector<float>::size_type i = 0; i != row.size(); i++)
 		{
 			if (row[i] > max)
 			{
@@ -97,15 +104,54 @@ namespace dynamic_shortest_path
 		return index;
 	}
 
+	bool Dsp::index_far_enough(int index, std::vector<int> indices)
+	{
+		bool is_far_enough = true;
+		for (unsigned int i = 0; i < indices.size(); i++)
+		{
+			is_far_enough &= (std::abs(index - indices[i]) > this->mult_hyp_dist);
+		}
+		return is_far_enough;
+	}
+
+	std::vector<int> Dsp::get_max_indices(int row_num, int num_indices)
+	{
+		return this->get_max_indices(this->nodes[row_num], num_indices);
+	}
+
+	std::vector<int> Dsp::get_max_indices(std::vector<float> row, int num_indices)
+	{
+		std::vector<int> indices;
+
+		for (int index = 0; index < num_indices; index++)
+		{
+			int curr_index = -1;
+			float max = 0;
+			for(std::vector<float>::size_type i = 0; i != row.size(); i++)
+			{
+				if (row[i] > max && index_far_enough(i, indices))
+				{
+					curr_index = i;
+					max = row[i];
+				}
+			}
+			if (curr_index >= 0)
+			{
+				indices.push_back(curr_index);
+			}
+		}
+		return indices;
+	}
+
 	std::vector<std::vector<float> > Dsp::get_graph()
 	{
-		return this->graph;
+		return this->nodes;
 	}
 
 	void Dsp::print()
 	{
 		std::vector<float>::iterator col;
-		for(std::vector<std::vector<float> >::iterator row = this->graph.begin(); row != this->graph.end(); ++row)
+		for(std::vector<std::vector<float> >::iterator row = this->nodes.begin(); row != this->nodes.end(); ++row)
 		{
 			for(std::vector<float>::iterator col = row->begin(); col != row->end(); ++col)
 			{
