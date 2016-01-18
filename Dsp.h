@@ -18,8 +18,7 @@ namespace dynamic_shortest_path
 	class Dsp
 	{
 		public:
-			Dsp(int num_connections, std::vector<float> first_edges);
-			Dsp(int num_connections, std::vector<std::vector<float> > graph);
+			Dsp(int num_connections, float hidden_threshold, float genuine_match_threshold, int mult_hyp_dist, std::vector<float> first_edges);
 			virtual ~Dsp();
 			void forward(std::vector<float> new_edges);
 			Path backward();
@@ -34,7 +33,12 @@ namespace dynamic_shortest_path
 			int get_max_index(int row_num);
 			int get_max_index(std::vector<float> row);
 			std::vector<std::vector<float> > graph;
+			std::vector<bool> hidden_rows;
+			bool is_hidden_row(std::vector<float> row);
+			float hidden_threshold;
 			int num_connections;
+			int mult_hyp_dist;
+			float genuine_match_threshold;
 	};
 
 } /* namespace dynamic_shortest_path */

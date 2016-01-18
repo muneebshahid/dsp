@@ -9,20 +9,23 @@
 
 namespace dynamic_shortest_path {
 
-	Dsp::Dsp(int num_connections, std::vector<float> first_edges)
+	Dsp::Dsp(int num_connections, float hidden_threshold, float genuine_match_threshold, int mult_hyp_dist, std::vector<float> first_edges)
 	{
 		this->num_connections = num_connections;
+		this->hidden_threshold = hidden_threshold;
+		this->mult_hyp_dist = mult_hyp_dist;
+		this->genuine_match_threshold = genuine_match_threshold;
 		this->graph.push_back(first_edges);
-	}
-
-	Dsp::Dsp(int num_connections, std::vector<std::vector<float> > graph)
-	{
-		this->num_connections = num_connections;
-		this->graph = graph;
+		this->hidden_rows.push_back(this->is_hidden_row(first_edges));
 	}
 
 	Dsp::~Dsp()
 	{
+	}
+
+	bool Dsp::is_hidden_row(std::vector<float> edges)
+	{
+		return *std::max_element(edges.begin(), edges.end()) < this->hidden_threshold;
 	}
 
 	int Dsp::get_start_index(int y)
