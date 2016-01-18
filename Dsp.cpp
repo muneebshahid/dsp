@@ -7,18 +7,9 @@
 
 #include "Dsp.h"
 
-namespace dynamic_shortest_path {
+namespace dynamic_shortest_path
 
-	Dsp::Dsp(int num_connections, float hidden_threshold, float genuine_match_threshold, int mult_hyp_dist, std::vector<float> first_edges)
-	{
-		this->num_connections = num_connections;
-		this->hidden_threshold = hidden_threshold;
-		this->mult_hyp_dist = mult_hyp_dist;
-		this->genuine_match_threshold = genuine_match_threshold;
-		this->graph.push_back(first_edges);
-		this->hidden_rows.push_back(this->is_hidden_row(first_edges));
-	}
-
+{
 	Dsp::~Dsp()
 	{
 	}
@@ -54,13 +45,20 @@ namespace dynamic_shortest_path {
 
 	void Dsp::forward(std::vector<float> new_edges)
 	{
-		if (new_edges.size() != this->graph[0].size())
+		if (new_edges.size() != this->width)
 		{
 			std::cout<<"Size of provided data in consistent with earlier data.";
 		}
 		else
 		{
-			this->update_scores(new_edges);
+			if (this->graph.size() > 0)
+			{
+				this->update_scores(new_edges);
+			}
+			else
+			{
+				this->graph.push_back(new_edges);
+			}
 		}
 	}
 

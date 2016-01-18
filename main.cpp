@@ -39,8 +39,8 @@ std::vector<std::vector<float> > read_graph()
 int main()
 {
 	std::vector<std::vector<float> > lines = read_graph();
-	Dsp path(3, .05, .7, 4, lines[0]);
-	for(std::vector<int>::size_type i = 1; i != lines.size(); i++)
+	Dsp path(3, .05, .7, 4, lines[0].size());
+	for(std::vector<int>::size_type i = 0; i != lines.size(); i++)
 	{
 		path.forward(lines[i]);
 		path.print();
