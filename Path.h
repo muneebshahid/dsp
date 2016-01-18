@@ -18,12 +18,14 @@ class Path {
 public:
 	Path();
 	virtual ~Path();
-	std::vector<float> get_path();
+	std::vector<std::vector<int> > get_path();
 	void print();
-	void append(float step);
+	void append(int step);
+	void append(std::vector<int> step);
 	float get_cost();
+	std::vector<int> get_row(int i);
 private:
-	std::vector<float> path;
+	std::vector<std::vector<int> > path;
 };
 
 } /* namespace dynamic_shortest_path */

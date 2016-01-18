@@ -12,33 +12,51 @@ namespace dynamic_shortest_path
 
 	Path::Path()
 	{
-		// TODO Auto-generated constructor stub
-
 	}
 
 	Path::~Path()
 	{
-		// TODO Auto-generated destructor stub
 	}
 
-	void Path::append(float step)
+	void Path::append(int step)
+	{
+		this->path.back().push_back(step);
+	}
+
+	void Path::append(std::vector<int> step)
 	{
 		this->path.push_back(step);
 	}
 
-	std::vector<float> Path::get_path()
+	std::vector<std::vector<int> > Path::get_path()
 	{
-		std::vector<float> path_rev = this->path;
+		std::vector<std::vector<int> > path_rev = this->path;
 		std::reverse(path_rev.begin(), path_rev.end());
 		return path_rev;
 	}
 
+	std::vector<int> Path::get_row(int i)
+	{
+		if (i > 0)
+		{
+			return this->path[i];
+		}
+		else
+		{
+			return this->path.back();
+		}
+
+	}
+
 	void Path::print()
 	{
-		std::vector<float> path = this->get_path();
-		for (std::vector<float>::iterator it = path.begin(); it != path.end(); ++it)
+		for(std::vector<std::vector<int> >::reverse_iterator row = this->path.rbegin(); row != this->path.rend(); ++row)
 		{
-			std::cout<<*it<<" \n";
+			for(std::vector<int>::iterator col = row->begin(); col != row->end(); ++col)
+			{
+				std::cout<<*col<<" ";
+			}
+			std::cout<<std::endl;
 		}
 	}
 

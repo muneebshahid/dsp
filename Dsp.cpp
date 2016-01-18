@@ -71,15 +71,23 @@ namespace dynamic_shortest_path
 	Path Dsp::backward(int path_num)
 	{
 		Path path;
-		int last_row = this->nodes.size() - 1;
-		int max_index = get_max_index(last_row);
-		path.append(max_index);
-		for (int row = last_row - 1; row >= 0; row--)
+		int last_row_index = this->nodes.size() - 1;
+		path.append(this->get_max_indices(last_row_index, path_num));
+		for (int row = last_row_index - 1; row >= 0; row--)
 		{
-			std::vector<float> parents = this->get_parents(max_index, this->nodes[row].begin());
-			std::reverse(parents.begin(), parents.end());
-			max_index -= this->get_max_index(parents);
-			path.append(max_index);
+			std::vector<int> max_indices;
+			std::vector<int> last_row = path.get_row(-1);
+			for (std::vector<int>::iterator max_index = last_row.begin(); max_index != last_row.end(); ++max_index)
+			{
+				std::vector<float> parents = this->get_parents(*max_index, this->nodes[row].begin());
+				std::reverse(parents.begin(), parents.end());
+				*max_index -= this->get_max_index(parents);
+				if (this->index_far_enough(*max_index, max_indices))
+				{
+					max_indices.push_back(*max_index);
+				}
+			}
+			path.append(max_indices);
 		}
 		return path;
 	}
@@ -150,7 +158,6 @@ namespace dynamic_shortest_path
 
 	void Dsp::print()
 	{
-		std::vector<float>::iterator col;
 		for(std::vector<std::vector<float> >::iterator row = this->nodes.begin(); row != this->nodes.end(); ++row)
 		{
 			for(std::vector<float>::iterator col = row->begin(); col != row->end(); ++col)
