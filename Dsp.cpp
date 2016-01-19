@@ -34,6 +34,11 @@ namespace dynamic_shortest_path
 
 	void Dsp::update_graph(std::vector<float> nodes, std::vector<float> edges)
 	{
+		if (this->hidden_threshold > 0)
+		{
+			float max_element = *std::max_element(edges.begin(), edges.end());
+			this->hidden_rows.push_back(max_element < this->hidden_threshold);
+		}
 		this->nodes.push_back(nodes);
 		this->edges.push_back(edges);
 	}
@@ -87,7 +92,7 @@ namespace dynamic_shortest_path
 					max_indices.push_back(*max_index);
 				}
 			}
-			path.append(max_indices);
+			path.append(max_indices, this->hidden_rows[row]);
 		}
 		return path;
 	}
