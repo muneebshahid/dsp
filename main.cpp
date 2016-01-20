@@ -19,7 +19,7 @@ using namespace dynamic_shortest_path;
 
 std::vector<std::vector<float> > read_graph()
 {
-	std::ifstream scores("scores.txt");
+	std::ifstream scores("src/scores.txt");
 	std::string line;
 	std::vector<std::vector<float> > lines;
 	while (std::getline(scores, line))
