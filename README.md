@@ -1,7 +1,7 @@
 # dsp
 
 Uses dynamic programming to handle changing graph (scoring matrix) and maintains multiple path hypothesis.
-
+------------------------------------------------------------------------------------------------------------------------------------
 - Dsp dsp(3, .05, 2, width); creates a dsp instance where:
 - 3 = number of connections to next row.
 - .05 threshold for hidden rows, if all incoming edges are below this threshold then that row is treated as a hidden row i.e no corresponding db images was found.
