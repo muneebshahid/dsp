@@ -64,7 +64,7 @@ namespace dynamic_shortest_path
 		this->forward(new_edges, 0, -1, -1, true);
 	}
 
-	void Dsp::forward(std::vector<float> new_edges, int hyp, int start, int end, bool update_edges)
+	void Dsp::forward(std::vector<float> new_edges, int hyp, int start, int end, bool append_edges)
 	{
 		if (new_edges.size() != this->width)
 		{
@@ -78,55 +78,78 @@ namespace dynamic_shortest_path
 					std::vector<float> parents = this->get_parents(i, this->nodes.at(hyp).back().begin());
 					nodes.push_back(*std::max_element(parents.begin(), parents.end()) + new_edges[i]);
 				}
-				this->update_graph(nodes, new_edges, hyp, update_edges);
+				this->update_graph(nodes, new_edges, hyp, append_edges);
 		}
 		else
 		{
-				this->update_graph(new_edges, new_edges, hyp, update_edges);
+				this->update_graph(new_edges, new_edges, hyp, append_edges);
 		}
 	}
 
-	void forward_all(int hyp, int start, int end)
+	void Dsp::forward_all(int hyp, int start, int end)
 	{
+		for (unsigned int row_index = 0; row_index < this->edges.at(hyp).size(); row_index++)
+		{
+			this->forward(this->edges.at(hyp).at(row_index), hyp, start, end, false);
+		}
 	}
 
-	Path Dsp::backward()
+	void Dsp::update_edges(std::vector<Path> discovered_paths, int hyp)
+	{
+		int last_index = this->width - 1;
+		this->edges.at(hyp) = this->edges.at(0);
+		for (unsigned int path_index = 0; path_index < discovered_paths.size(); path_index++)
+		{
+			std::vector<int> curr_path = discovered_paths.at(path_index).get_path();
+			for(unsigned int element = 0; element < curr_path.size(); element++)
+			{
+				int start_index = std::max(0, curr_path.at(element) - this->mult_hyp_dist);
+				int forward_index = curr_path.at(element) + this->mult_hyp_dist;
+				int end_index = std::min(last_index, forward_index);
+				while(start_index <= end_index)
+				{
+					this->edges.at(hyp).at(element).at(start_index) = -1;
+					start_index++;
+				}
+			}
+		}
+	}
+
+	std::vector<Path> Dsp::backward()
 	{
 		return this->backward(1);
 	}
 
-	Path Dsp::backward(int path_num)
+	std::vector<Path> Dsp::backward(int path_num)
 	{
-		return this->backward(path_num, 0);
-	}
-
-	Path Dsp::backward(int path_num, int hyp)
-	{
-		Path path;
-		int last_row_index = this->nodes.at(hyp).size() - 1;
-		path.append(this->get_max_indices(last_row_index, path_num));
-		for (int row = last_row_index - 1; row >= 0; row--)
+		std::vector<Path> paths;
+		for (int hyp = 0; hyp < path_num; hyp++)
 		{
-			std::vector<int> max_indices;
-			std::vector<int> last_row = path.get_row(-1);
-			for (std::vector<int>::iterator max_index = last_row.begin(); max_index != last_row.end(); ++max_index)
+			Path path;
+			if (hyp > 0)
 			{
-				std::vector<float> parents = this->get_parents(*max_index, this->nodes.at(0).at(row).begin());
-				std::reverse(parents.begin(), parents.end());
-				*max_index -= this->get_max_index(parents);
-				if (this->index_far_enough(*max_index, max_indices))
-				{
-					max_indices.push_back(*max_index);
-				}
+				this->update_edges(paths, hyp);
+				this->forward_all(hyp, 0, 0);
 			}
-			path.append(max_indices, this->hidden_rows[row]);
+			int last_row_index = this->nodes.at(hyp).size() - 1;
+			path.append(this->get_max_index(hyp, last_row_index));
+			for (int row = last_row_index - 1; row >= 0; row--)
+			{
+				int last_max_index = path.get_element(-1);
+				std::vector<float> parents = this->get_parents(last_max_index, this->nodes.at(hyp).at(row).begin());
+				std::reverse(parents.begin(), parents.end());
+				int max_index = last_max_index - this->get_max_index(parents);
+				path.append(max_index, this->hidden_rows[row]);
+			}
+			path.reverse();
+			paths.push_back(path);
 		}
-		return path;
+		return paths;
 	}
 
-	int Dsp::get_max_index(int row_num)
+	int Dsp::get_max_index(int hyp, int row_num)
 	{
-		return this->get_max_index(this->nodes.at(0).at(row_num));
+		return this->get_max_index(this->nodes.at(hyp).at(row_num));
 	}
 
 	int Dsp::get_max_index(std::vector<float> row)
@@ -188,9 +211,21 @@ namespace dynamic_shortest_path
 		return this->nodes.at(0);
 	}
 
-	void Dsp::print()
+	void Dsp::print_edges(int hyp)
 	{
-		for(std::vector<std::vector<float> >::iterator row = this->nodes.at(0).begin(); row != this->nodes.at(0).end(); ++row)
+		for(std::vector<std::vector<float> >::iterator row = this->edges.at(hyp).begin(); row != this->edges.at(hyp).end(); ++row)
+		{
+			for(std::vector<float>::iterator col = row->begin(); col != row->end(); ++col)
+			{
+				std::cout<<*col<<" ";
+			}
+			std::cout<<std::endl;
+		}
+	}
+
+	void Dsp::print_nodes(int hyp)
+	{
+		for(std::vector<std::vector<float> >::iterator row = this->nodes.at(hyp).begin(); row != this->nodes.at(hyp).end(); ++row)
 		{
 			for(std::vector<float>::iterator col = row->begin(); col != row->end(); ++col)
 			{

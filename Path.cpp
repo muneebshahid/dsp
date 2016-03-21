@@ -18,22 +18,38 @@ namespace dynamic_shortest_path
 	{
 	}
 
-	void Path::append(std::vector<int> step)
+	void Path::append(int step)
 	{
 		this->append(step, false);
 	}
 
-	void Path::append(std::vector<int> step, bool is_hidden)
+	void Path::append(int step, bool is_hidden)
 	{
 		this->path.push_back(step);
 		this->hidden_rows.push_back(is_hidden);
 	}
 
-	std::vector<std::vector<int> > Path::get_path()
+	void Path::reverse()
 	{
-		std::vector<std::vector<int> > path_rev = this->path;
-		std::reverse(path_rev.begin(), path_rev.end());
-		return path_rev;
+		std::reverse(this->path.begin(), this->path.end());
+	}
+
+	std::vector<int> Path::get_path()
+	{
+		return this->path;
+	}
+
+
+//	std::vector<std::vector<int> > Path::get_paths()
+//	{
+//		std::vector<std::vector<int> > path_rev = this->path;
+//		std::reverse(path_rev.begin(), path_rev.end());
+//		return path_rev;
+//	}
+
+	int Path::size()
+	{
+		return this->path.size();
 	}
 
 	std::vector<bool> Path::get_hidden_rows()
@@ -43,7 +59,7 @@ namespace dynamic_shortest_path
 		return hidden_row_rev;
 	}
 
-	std::vector<int> Path::get_row(int i)
+	int Path::get_element(int i)
 	{
 		if (i > 0)
 		{
@@ -53,7 +69,6 @@ namespace dynamic_shortest_path
 		{
 			return this->path.back();
 		}
-
 	}
 
 	void Path::print()
@@ -63,22 +78,27 @@ namespace dynamic_shortest_path
 
 	void Path::print(bool print_hidden_rows)
 	{
-		for(int row = this->path.size() - 1; row >= 0; row--)
-		{
-			if (print_hidden_rows || !this->hidden_rows[row])
-			{
-				for(std::vector<int>::iterator col = this->path[row].begin(); col != this->path[row].end(); ++col)
-				{
-					std::cout<<*col<<" ";
-				}
 
-			}
-			else
-			{
-				std::cout<<"-1 ";
-			}
-			std::cout<<std::endl;
+		for(std::vector<int>::iterator col = this->path.begin(); col != this->path.end(); ++col)
+		{
+			std::cout<<*col<<" ";
 		}
+//		for(int row = this->path.size() - 1; row >= 0; row--)
+//		{
+//			if (print_hidden_rows || !this->hidden_rows[row])
+//			{
+//				for(std::vector<int>::iterator col = this->path.begin(); col != this->path.end(); ++col)
+//				{
+//					std::cout<<*col<<" ";
+//				}
+//
+//			}
+//			else
+//			{
+//				std::cout<<"-1 ";
+//			}
+//			std::cout<<std::endl;
+//		}
 	}
 
 } /* namespace dynamic_shortest_path */

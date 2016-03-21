@@ -18,16 +18,19 @@ class Path {
 public:
 	Path();
 	virtual ~Path();
-	std::vector<std::vector<int> > get_path();
+	std::vector<int> get_path();
+	int size();
+	int get_length();
 	void print();
 	void print(bool print_hidden_rows);
-	void append(std::vector<int> step);
-	void append(std::vector<int>, bool is_hidden);
+	void append(int step);
+	void append(int step, bool is_hidden);
 	float get_cost();
-	std::vector<int> get_row(int i);
+	int get_element(int i);
+	void reverse();
 	std::vector<bool> get_hidden_rows();
 private:
-	std::vector<std::vector<int> > path;
+	std::vector<int> path;
 	std::vector<bool> hidden_rows;
 };
 

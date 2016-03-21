@@ -13,13 +13,15 @@
 
 #include "Dsp.h"
 #include "Path.h"
+#include <cstdio>
+#include <ctime>
 
 using namespace std;
 using namespace dynamic_shortest_path;
 
 std::vector<std::vector<float> > read_graph()
 {
-	std::ifstream scores("src/scores.txt");
+	std::ifstream scores("src/normalized_scores.txt");
 	std::string line;
 	std::vector<std::vector<float> > lines;
 	while (std::getline(scores, line))
@@ -40,13 +42,25 @@ int main()
 {
 	std::vector<std::vector<float> > lines = read_graph();
 	Dsp dsp(3, .05, 3, lines[0].size(), 3);
+	std::clock_t start;
+	double duration;
+	std::cout<<"starting..."<<std::endl;
+	std::cout.flush();
+	start = std::clock();
 	for(std::vector<int>::size_type i = 0; i != lines.size(); i++)
 	{
 		dsp.forward(lines[i]);
-		dsp.print();
-		std::cout<<"\n----------\n";
 	}
-	Path shortest_path = dsp.backward(2);
-	shortest_path.print(false);
+	std::vector<Path> shortest_path = dsp.backward(2);
+//	dsp.print_nodes(0);
+//	std::cout<<"\n----------\n";
+//	dsp.print_nodes(1);
+//	std::cout<<"\n----------\n";
+	//shortest_path.at(0).print(false);
+	//std::cout<<"\n----------\n";
+	//shortest_path.at(1).print(false);
+    duration = ( std::clock() - start ) / (double) CLOCKS_PER_SEC;
+
+    std::cout<<"printf: "<< duration <<'\n';
 	return 0;
 }
