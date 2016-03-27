@@ -10,7 +10,7 @@
 #include <fstream>
 #include <vector>
 #include <sstream>
-
+#include <iterator>
 #include "Dsp.h"
 #include "Path.h"
 #include <cstdio>
@@ -41,7 +41,7 @@ std::vector<std::vector<float> > read_graph()
 int main()
 {
 	std::vector<std::vector<float> > lines = read_graph();
-	Dsp dsp(3, .05, 3, lines[0].size(), 3);
+	Dsp dsp(2, 50, 3, lines[0].size());
 	std::clock_t start;
 	double duration;
 	std::cout<<"starting..."<<std::endl;
@@ -49,18 +49,22 @@ int main()
 	start = std::clock();
 	for(std::vector<int>::size_type i = 0; i != lines.size(); i++)
 	{
-		dsp.forward(lines[i]);
+		dsp.update_graph(lines[i]);
 	}
-	std::vector<Path> shortest_path = dsp.backward(2);
-//	dsp.print_nodes(0);
+	std::vector<Path> paths = dsp.get_paths();
+	duration = ( std::clock() - start ) / (double) CLOCKS_PER_SEC;
+//	dsp.print_edges(0);
 //	std::cout<<"\n----------\n";
-//	dsp.print_nodes(1);
-//	std::cout<<"\n----------\n";
-	//shortest_path.at(0).print(false);
-	//std::cout<<"\n----------\n";
-	//shortest_path.at(1).print(false);
-    duration = ( std::clock() - start ) / (double) CLOCKS_PER_SEC;
-
-    std::cout<<"printf: "<< duration <<'\n';
+//	dsp.print_edges(1);
+	std::cout<<"\n----------\n";
+	paths.at(0).print(false);
+	std::cout<<"\n----------\n";
+	paths.at(1).print(false);
+    std::cout<<"duration: "<< duration <<'\n';
+    std::ofstream f("somefile.txt");
+    for(int i = 0; i < paths.at(1).get_path().size(); i++)
+    {
+        f << paths.at(1).get_element(i) << '\n';
+    }
 	return 0;
 }

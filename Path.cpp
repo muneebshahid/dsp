@@ -61,13 +61,15 @@ namespace dynamic_shortest_path
 
 	int Path::get_element(int i)
 	{
-		if (i > 0)
+		if (i >= 0)
 		{
 			return this->path[i];
 		}
 		else
 		{
-			return this->path.back();
+			//i = -1 * i -1;
+			//return *(this->path.rbegin() + i);
+			return this->path[this->path.size() + i];
 		}
 	}
 
