@@ -158,14 +158,15 @@ namespace dynamic_shortest_path
 	{
 		Path path;
 		int last_row_index = this->nodes.at(hyp).size() - 1;
-		path.append(this->get_max_index(hyp, last_row_index));
+		int max_index = this->get_max_index(hyp, last_row_index);
+		path.append(max_index, this->edges.at(hyp).at(last_row_index).at(max_index));
 		for (int row = last_row_index - 1; row >= 0; row--)
 		{
 			int last_max_index = path.get_element(-1);
 			std::vector<float> parents = this->get_parents(last_max_index, this->nodes.at(hyp).at(row).begin());
 			std::reverse(parents.begin(), parents.end());
-			int max_index = last_max_index - this->get_max_index(parents);
-			path.append(max_index);
+			max_index = last_max_index - this->get_max_index(parents);
+			path.append(max_index, this->edges.at(hyp).at(row).at(max_index));
 		}
 		path.reverse();
 		return path;

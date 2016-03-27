@@ -11,6 +11,9 @@
 #include <vector>
 #include <iostream>
 #include <algorithm>
+#include <string>
+#include <fstream>
+#include <sstream>
 
 namespace dynamic_shortest_path {
 
@@ -19,19 +22,20 @@ public:
 	Path();
 	virtual ~Path();
 	std::vector<int> get_path();
+	std::vector<std::vector<int> > get_path(int threshold);
 	int size();
 	int get_length();
 	void print();
 	void print(bool print_hidden_rows);
-	void append(int step);
-	void append(int step, bool is_hidden);
+	void append(int step, float edge_value);
 	float get_cost();
 	int get_element(int i);
 	void reverse();
-	std::vector<bool> get_hidden_rows();
+	void write_path(std::string save_path);
+	void write_path(std::string save_path, int threshold);
 private:
 	std::vector<int> path;
-	std::vector<bool> hidden_rows;
+	std::vector<float> edge_values;
 };
 
 } /* namespace dynamic_shortest_path */

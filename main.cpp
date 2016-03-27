@@ -15,13 +15,14 @@
 #include "Path.h"
 #include <cstdio>
 #include <ctime>
+#include <string>
 
 using namespace std;
 using namespace dynamic_shortest_path;
 
 std::vector<std::vector<float> > read_graph()
 {
-	std::ifstream scores("src/normalized_scores.txt");
+	std::ifstream scores("src/scores.txt");
 	std::string line;
 	std::vector<std::vector<float> > lines;
 	while (std::getline(scores, line))
@@ -41,7 +42,7 @@ std::vector<std::vector<float> > read_graph()
 int main()
 {
 	std::vector<std::vector<float> > lines = read_graph();
-	Dsp dsp(2, 50, 3, lines[0].size());
+	Dsp dsp(2, 3, 3, lines[0].size());
 	std::clock_t start;
 	double duration;
 	std::cout<<"starting..."<<std::endl;
@@ -53,18 +54,19 @@ int main()
 	}
 	std::vector<Path> paths = dsp.get_paths();
 	duration = ( std::clock() - start ) / (double) CLOCKS_PER_SEC;
-//	dsp.print_edges(0);
-//	std::cout<<"\n----------\n";
-//	dsp.print_edges(1);
-	std::cout<<"\n----------\n";
-	paths.at(0).print(false);
-	std::cout<<"\n----------\n";
-	paths.at(1).print(false);
+	for (int i = 0; i < paths.size(); i++)
+	{
+		stringstream ss;
+		ss << i;
+		string str = ss.str();
+		std::string save_path = str + ".txt";
+		paths.at(i).write_path(save_path, .1);
+	}
     std::cout<<"duration: "<< duration <<'\n';
-    std::ofstream f("somefile.txt");
-    for(int i = 0; i < paths.at(1).get_path().size(); i++)
-    {
-        f << paths.at(1).get_element(i) << '\n';
-    }
+//    std::ofstream f("somefile.txt");
+//    for(int i = 0; i < paths.at(1).get_path().size(); i++)
+//    {
+//        f << paths.at(1).get_element(i) << '\n';
+//    }
 	return 0;
 }
