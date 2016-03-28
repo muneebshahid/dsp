@@ -81,7 +81,7 @@ namespace dynamic_shortest_path
 					curr_paths.push_back(this->backward(hyp));
 				}
 				else if ((this->paths.at(hyp - 1).size() > 1) &&
-						(std::abs(curr_paths.at(hyp - 1).get_element(-2) - this->paths.at(hyp - 1).get_element(-1))) <= 10)
+						(std::abs(curr_paths.at(hyp - 1).get_element(-2) - this->paths.at(hyp - 1).get_element(-1))) <= 0)
 				{
 					edges = this->modify_row(edges, curr_paths.at(hyp - 1).get_element(-1));
 					this->forward(edges, hyp, true);
@@ -159,14 +159,16 @@ namespace dynamic_shortest_path
 		Path path;
 		int last_row_index = this->nodes.at(hyp).size() - 1;
 		int max_index = this->get_max_index(hyp, last_row_index);
-		path.append(max_index, this->edges.at(hyp).at(last_row_index).at(max_index));
+		float value = this->edges.at(hyp).at(last_row_index).at(max_index);
+		path.append(max_index, value);
 		for (int row = last_row_index - 1; row >= 0; row--)
 		{
 			int last_max_index = path.get_element(-1);
 			std::vector<float> parents = this->get_parents(last_max_index, this->nodes.at(hyp).at(row).begin());
 			std::reverse(parents.begin(), parents.end());
 			max_index = last_max_index - this->get_max_index(parents);
-			path.append(max_index, this->edges.at(hyp).at(row).at(max_index));
+			value = this->edges.at(hyp).at(row).at(max_index);
+			path.append(max_index, value);
 		}
 		path.reverse();
 		return path;

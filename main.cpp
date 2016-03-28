@@ -42,7 +42,10 @@ std::vector<std::vector<float> > read_graph()
 int main()
 {
 	std::vector<std::vector<float> > lines = read_graph();
-	Dsp dsp(2, 3, 3, lines[0].size());
+	int num_hypothesis = 2;
+	int hypothesis_distance = 2;
+	int num_connections = 3;
+	Dsp dsp(num_hypothesis, hypothesis_distance, num_connections, lines[0].size());
 	std::clock_t start;
 	double duration;
 	std::cout<<"starting..."<<std::endl;
@@ -54,19 +57,14 @@ int main()
 	}
 	std::vector<Path> paths = dsp.get_paths();
 	duration = ( std::clock() - start ) / (double) CLOCKS_PER_SEC;
-	for (int i = 0; i < paths.size(); i++)
+	std::cout<<"duration: "<< duration <<std::endl;
+	for (unsigned int i = 0; i < paths.size(); i++)
 	{
 		stringstream ss;
 		ss << i;
 		string str = ss.str();
 		std::string save_path = str + ".txt";
-		paths.at(i).write_path(save_path, .1);
+		paths.at(i).write_path(save_path, .5);
 	}
-    std::cout<<"duration: "<< duration <<'\n';
-//    std::ofstream f("somefile.txt");
-//    for(int i = 0; i < paths.at(1).get_path().size(); i++)
-//    {
-//        f << paths.at(1).get_element(i) << '\n';
-//    }
 	return 0;
 }

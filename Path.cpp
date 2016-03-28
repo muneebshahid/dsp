@@ -27,6 +27,7 @@ namespace dynamic_shortest_path
 	void Path::reverse()
 	{
 		std::reverse(this->path.begin(), this->path.end());
+		std::reverse(this->edge_values.begin(), this->edge_values.end());
 	}
 
 	std::vector<int> Path::get_path()
@@ -34,16 +35,18 @@ namespace dynamic_shortest_path
 		return this->path;
 	}
 
-	std::vector<std::vector<int> > Path::get_path(int threshold)
+	std::vector<std::vector<int> > Path::get_path(float threshold)
 	{
 		std::vector<std::vector<int> > path;
-		int row = 0;
-		for(std::vector<int>::iterator col = this->path.begin(); col != this->path.end(); ++col, row++)
+		for(unsigned int row = 0; row < this->path.size(); row++)
 		{
-			if (*col >= threshold)
+			int col = this->path[row];
+			float value = this->edge_values[row];
+			if (value >= threshold)
 			{
+				path.push_back(std::vector<int>());
 				path.back().push_back(row);
-				path.back().push_back(*col);
+				path.back().push_back(col);
 			}
 		}
 		return path;
@@ -62,8 +65,6 @@ namespace dynamic_shortest_path
 		}
 		else
 		{
-			//i = -1 * i -1;
-			//return *(this->path.rbegin() + i);
 			return this->path[this->path.size() + i];
 		}
 	}
@@ -82,13 +83,13 @@ namespace dynamic_shortest_path
 		}
 	}
 
-	void Path::write_path(std::string save_path, int threshold)
+	void Path::write_path(std::string save_path, float threshold)
 	{
 		std::ofstream f(save_path.c_str());
-		std::vector<std::vector<int> > path(this->get_path(threshold));
+		std::vector<std::vector<int> > path = this->get_path(threshold);
 		for(unsigned int i = 0; i < path.size(); i++)
 		{
-			f << path.at(i).at(0) << ' ' << path.at(i).at(0) << '\n';
+			f << path.at(i).at(0) << ' ' << path.at(i).at(1) << '\n';
 		}
 	}
 

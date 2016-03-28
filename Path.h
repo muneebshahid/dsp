@@ -22,7 +22,7 @@ public:
 	Path();
 	virtual ~Path();
 	std::vector<int> get_path();
-	std::vector<std::vector<int> > get_path(int threshold);
+	std::vector<std::vector<int> > get_path(float threshold);
 	int size();
 	int get_length();
 	void print();
@@ -32,7 +32,7 @@ public:
 	int get_element(int i);
 	void reverse();
 	void write_path(std::string save_path);
-	void write_path(std::string save_path, int threshold);
+	void write_path(std::string save_path, float threshold);
 private:
 	std::vector<int> path;
 	std::vector<float> edge_values;
