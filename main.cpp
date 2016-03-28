@@ -45,7 +45,8 @@ int main()
 	int num_hypothesis = 2;
 	int hypothesis_distance = 2;
 	int num_connections = 3;
-	Dsp dsp(num_hypothesis, hypothesis_distance, num_connections, lines[0].size());
+	const unsigned int recalculation_threshold = 0;
+	Dsp dsp(num_hypothesis, hypothesis_distance, num_connections, lines[0].size(), recalculation_threshold);
 	std::clock_t start;
 	double duration;
 	std::cout<<"starting..."<<std::endl;

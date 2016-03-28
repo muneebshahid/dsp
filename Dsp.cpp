@@ -10,11 +10,12 @@
 namespace dynamic_shortest_path
 
 {
-	Dsp::Dsp(int num_hyp, int mult_hyp_dist, int num_connections, int width)
+	Dsp::Dsp(int num_hyp, int mult_hyp_dist, int num_connections, int width, const unsigned int recalculation_threshold)
 				: num_hyp (num_hyp),
 				  mult_hyp_dist (mult_hyp_dist),
 				  num_connections (num_connections),
-				  width (width)
+				  width (width),
+				  recalculation_threshold (recalculation_threshold)
 	{
 		this->partial = 0;
 		this->full = 0;
@@ -81,7 +82,7 @@ namespace dynamic_shortest_path
 					curr_paths.push_back(this->backward(hyp));
 				}
 				else if ((this->paths.at(hyp - 1).size() > 1) &&
-						(std::abs(curr_paths.at(hyp - 1).get_element(-2) - this->paths.at(hyp - 1).get_element(-1))) <= 0)
+						(std::abs(curr_paths.at(hyp - 1).get_element(-2) - this->paths.at(hyp - 1).get_element(-1))) <= this->recalculation_threshold)
 				{
 					edges = this->modify_row(edges, curr_paths.at(hyp - 1).get_element(-1));
 					this->forward(edges, hyp, true);
