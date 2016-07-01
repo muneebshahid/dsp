@@ -43,9 +43,9 @@ int main()
 {
 	std::vector<std::vector<float> > lines = read_graph();
 	int num_hypothesis = 2;
-	int hypothesis_distance = 2;
+	int hypothesis_distance = 3;
 	int num_connections = 3;
-	Dsp dsp(num_hypothesis, hypothesis_distance, num_connections, lines[0].size());
+	Dsp dsp(num_hypothesis, hypothesis_distance, num_connections, lines[0].size(), 0);
 	std::clock_t start;
 	double duration;
 	std::cout<<"starting..."<<std::endl;
