@@ -18,7 +18,7 @@ namespace dynamic_shortest_path
 	class Dsp
 	{
 		public:
-			Dsp(int num_hyp, int mult_hyp_dist, int num_connections, int width, unsigned int recalculation_threshold);
+			Dsp(int num_hyp, int mult_hyp_dist, int num_connections, int width, int recalculation_threshold);
 			virtual ~Dsp();
 			void forward(std::vector<float> new_edges, int hyp, bool append_edges);
 			Path backward();
@@ -53,7 +53,7 @@ namespace dynamic_shortest_path
 			const int mult_hyp_dist;
 			const int num_connections;
 			const int width;
-			const unsigned int recalculation_threshold;
+			const int recalculation_threshold;
 	};
 } /* namespace dynamic_shortest_path */
 

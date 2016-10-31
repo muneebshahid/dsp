@@ -10,7 +10,8 @@
 namespace dynamic_shortest_path
 
 {
-	Dsp::Dsp(int num_hyp, int mult_hyp_dist, int num_connections, int width, const unsigned int recalculation_threshold)
+
+	Dsp::Dsp(int num_hyp, int mult_hyp_dist, int num_connections, int width, int recalculation_threshold)
 				: num_hyp (num_hyp),
 				  mult_hyp_dist (mult_hyp_dist),
 				  num_connections (num_connections),
