@@ -59,7 +59,7 @@ namespace dynamic_shortest_path
 		int end_index = std::min(last_index, forward_index);
 		while(start_index <= end_index)
 		{
-			row.at(start_index) = -1;
+			row.at(start_index) = 0;
 			start_index++;
 		}
 		return row;

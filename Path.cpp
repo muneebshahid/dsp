@@ -42,7 +42,7 @@ namespace dynamic_shortest_path
 		{
 			int col = this->path[row];
 			float value = this->edge_values[row];
-			if (value >= threshold)
+			if (threshold == NULL || value >= threshold)
 			{
 				path.push_back(std::vector<int>());
 				path.back().push_back(row);
