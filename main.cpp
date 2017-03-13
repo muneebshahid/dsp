@@ -28,11 +28,12 @@ std::vector<std::vector<float> > read_graph()
 //	std::ifstream scores("datasets/15seq2/hog64scores_normalized.txt");
 //	std::ifstream scores("datasets/15seq2/hog32scores_normalized.txt");
 //	std::ifstream scores("datasets/15seq2/normalized_scores.txt");
-//	std::ifstream scores("datasets/sequence3/normalized_scores.txt");
-//	std::ifstream scores("datasets/sequence1/normalized_scores.txt");
+	std::ifstream scores("datasets/seq1/normalized_scores.txt");
+//	std::ifstream scores("datasets/seq1/normalized_scores_old.txt");
 //	std::ifstream scores("datasets/seq1/hog32scores_normalized.txt");
-	std::ifstream scores("datasets/seq3/normalized_scores_hog32.txt");
 //	std::ifstream scores("datasets/seq1/hog64scores_normalized.txt");
+//	std::ifstream scores("datasets/seq3/normalized_scores_hog32.txt");
+
 //	std::ifstream scores("datasets/newcollege/normalized_scores.txt");
 //	std::ifstream scores("datasets/vprice/normalized_scores.txt");
 //	std::ifstream scores("datasets/gardenspoint/normalized_scores.txt");
