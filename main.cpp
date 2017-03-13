@@ -31,7 +31,8 @@ std::vector<std::vector<float> > read_graph()
 //	std::ifstream scores("datasets/sequence3/normalized_scores.txt");
 //	std::ifstream scores("datasets/sequence1/normalized_scores.txt");
 //	std::ifstream scores("datasets/seq1/hog32scores_normalized.txt");
-	std::ifstream scores("datasets/seq1/hog64scores_normalized.txt");
+	std::ifstream scores("datasets/seq3/normalized_scores_hog32.txt");
+//	std::ifstream scores("datasets/seq1/hog64scores_normalized.txt");
 //	std::ifstream scores("datasets/newcollege/normalized_scores.txt");
 //	std::ifstream scores("datasets/vprice/normalized_scores.txt");
 //	std::ifstream scores("datasets/gardenspoint/normalized_scores.txt");
@@ -88,108 +89,93 @@ int main()
 {
 	std::vector<std::vector<float> > lines = read_graph();
 
+	float min = 100.0;
+	float max = 0.0;
+	int num_connections = 3;
+	for (unsigned int i = 0; i < lines.size(); i++)
+	{
+		float curr_max = *std::max_element(lines[i].begin(), lines[i].end());
+		float curr_min = *std::min_element(lines[i].begin(), lines[i].end());
+		if (curr_max > max)
+		{
+			max = curr_max;
+		}
+		if (curr_min < min)
+		{
+			min = curr_min;
+		}
+	}
+
+
 	int hypothesis_distance;
 	int num_hypothesis;
-	float threshold_min;
-	float threshold_max;
+	float threshold_min = min;
+	float threshold_max = max;
 
 	int num_hypothesis_new_college = 10;
 	int hypothesis_distance_new_college = 50;
-	float threshold_min_new_college = 0.1;
-	float threshold_max_new_college = 3.5;
 
 	int num_hypothesis_seq_1 = 1;
 	int hypothesis_distance_seq_1 = 10;
-	float threshold_min_seq_1 = 0.6;
-	float threshold_max_seq_1 = 1.2;
 
 	int num_hypothesis_seq_3 = 2;
 	int hypothesis_distance_seq_3 = 100;
-	float threshold_min_seq_3 = 0.1;
-	float threshold_max_seq_3 = 1.7;
 
 	int num_hypothesis_vprice = 2;
 	int hypothesis_distance_vprice = 50;
-	float threshold_min_vprice = 0.4;
-	float threshold_max_vprice = 2.5;
 
 	int num_hypothesis_gp = 1;
 	int hypothesis_distance_gp = 10;
-	float threshold_min_gp = 0.67;
-	float threshold_max_gp = 1.8;
 
 	int num_hypothesis_default = 2;
 	int hypothesis_distance_default = 3;
-	float threshold_min_default = 0.1;
-	float threshold_max_default = .7;
 
 	int num_hypothesis_15seq12 = 2;
 	int hypothesis_distance_15seq12 = 50;
-	float threshold_min_15seq12 = 0.8;
-	float threshold_max_15seq12 = 1.2;
-	//	float threshold_min_15seq12 = 0.99;
-//	float threshold_max_15seq12 = 1.5;
-	int use_settings = 1;
+
+	int use_settings = 2;
 	if (use_settings  == 0)
 	{
 		num_hypothesis = num_hypothesis_new_college;
 		hypothesis_distance = hypothesis_distance_new_college;
-		threshold_min = threshold_min_new_college;
-		threshold_max = threshold_max_new_college;
 	}
 	else if (use_settings == 1)
 	{
 		num_hypothesis = num_hypothesis_seq_1;
 		hypothesis_distance = hypothesis_distance_seq_1;
-		threshold_min = threshold_min_seq_1;
-		threshold_max = threshold_max_seq_1;
 	}
 	else if (use_settings == 2)
 	{
 		num_hypothesis = num_hypothesis_seq_3;
 		hypothesis_distance = hypothesis_distance_seq_3;
-		threshold_min = threshold_min_seq_3;
-		threshold_max = threshold_max_seq_3;
 	}
 	else if (use_settings == 3)
 	{
 		num_hypothesis = num_hypothesis_vprice;
 		hypothesis_distance = hypothesis_distance_vprice;
-		threshold_min = threshold_min_vprice;
-		threshold_max = threshold_max_vprice;
 	}
 	else if (use_settings == 4)
 	{
 		num_hypothesis = num_hypothesis_gp;
 		hypothesis_distance = hypothesis_distance_gp;
-		threshold_min = threshold_min_gp;
-		threshold_max = threshold_max_gp;
 	}
 	else if (use_settings == 5)
 	{
 		num_hypothesis = num_hypothesis_15seq12;
 		hypothesis_distance = hypothesis_distance_15seq12;
-		threshold_min = threshold_min_15seq12;
-		threshold_max = threshold_max_15seq12;
 	}
 	else
 	{
 		num_hypothesis = num_hypothesis_default;
 		hypothesis_distance = hypothesis_distance_default;
-		threshold_min = threshold_min_default;
-		threshold_max = threshold_max_default;
 	}
 
-//	print_matrix(lines);
-//	std::cout<<"\n-------------------------\n";
-//	threshold_matrix(lines, .3);
-//	print_matrix(lines);
 
 	std::cout<<"hyp dist: " << hypothesis_distance;
 	std::cout<<"\nnum hyp: " << num_hypothesis;
 	std::cout<<"\nthrehsold min: "<< threshold_min;
 	std::cout<<"\nthrehsold max: "<< threshold_max;
-	int num_connections = 3;
+
 	const unsigned int recalculation_threshold = 0;
 
 	CreateDirectory( "PATHS", NULL );
@@ -248,25 +234,25 @@ int main()
 //			string str = ss.str();
 //			string root_folder = "PATHS\\" + str;
 //			CreateDirectory( &(root_folder)[0], NULL );
-	//		float curr_threshold = threshold_min;
-	//		while (curr_threshold < threshold_max)
-	//		{
-	//			stringstream tt;
-	//			tt << curr_threshold;
-	//			std::string threshold_string;
-	//			threshold_string = tt.str();
-	//
-	//			if (threshold_string.length() == 1)
-	//			{
-	//				threshold_string += ".0";
-	//			}
-	//			std::cout<<threshold_string<<std::endl;
-	//			std::string save_path = root_folder + "\\" + str + "_" + threshold_string + ".txt";
-	//			paths.at(i).write_path(save_path, curr_threshold);
-	//			curr_threshold += .1;
-	//		}
+//			float curr_threshold = threshold_min;
+//			while (curr_threshold <= threshold_max)
+//			{
+//				stringstream tt;
+//				tt << curr_threshold;
+//				std::string threshold_string;
+//				threshold_string = tt.str();
+//
+//				if (threshold_string.length() == 1)
+//				{
+//					threshold_string += ".0";
+//				}
+//				std::cout<<threshold_string<<std::endl;
+//				std::string save_path = root_folder + "\\" + str + "_" + threshold_string + ".txt";
+//				paths.at(i).write_path(save_path, curr_threshold);
+//				curr_threshold += .01;
+//			}
 		}
-		curr_threshold += .04;
+		curr_threshold += .02;
 	}
 	return 0;
 }
