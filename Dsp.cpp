@@ -65,6 +65,28 @@ namespace dynamic_shortest_path
 		return row;
 	}
 
+	void Dsp::update_graph(std::vector<std::vector<float> > graph)
+	{
+		std::vector<Path> curr_paths;
+		for (int hyp = 0; hyp < this->num_hyp; hyp++)
+		{
+			if (hyp == 0)
+			{
+				for (unsigned int row_index = 0; row_index < graph.size(); row_index++)
+				{
+					this->forward(graph.at(row_index), hyp, true);
+				}
+			}
+			else
+			{
+				this->update_edges(curr_paths, hyp);
+				this->forward_all(hyp, graph.size());
+			}
+			curr_paths.push_back(this->backward(hyp));
+		}
+		this->paths = curr_paths;
+	}
+
 	void Dsp::update_graph(std::vector<float> edges)
 	{
 		if (edges.size() != this->width)
@@ -95,7 +117,7 @@ namespace dynamic_shortest_path
 					this->full++;
 					this->update_edges(curr_paths, hyp);
 					this->nodes.at(hyp) = std::vector<std::vector<float> >();
-					this->forward_all(hyp, -1, -1);
+					this->forward_all(hyp);
 					curr_paths.push_back(this->backward(hyp));
 				}
 			}
@@ -130,9 +152,14 @@ namespace dynamic_shortest_path
 		}
 	}
 
-	void Dsp::forward_all(int hyp, int start, int end)
+	void Dsp::forward_all(int hyp)
 	{
-		for (int row_index = 0; row_index < this->edges.at(hyp).size(); row_index++)
+		this->forward_all(hyp, this->edges.at(hyp).size());
+	}
+
+	void Dsp::forward_all(int hyp, int end)
+	{
+		for (int row_index = 0; row_index < end; row_index++)
 		{
 			this->forward(this->edges.at(hyp).at(row_index), hyp, false);
 		}

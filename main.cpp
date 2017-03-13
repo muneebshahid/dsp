@@ -91,7 +91,7 @@ int main()
 
 	float min = 100.0;
 	float max = 0.0;
-	int num_connections = 3;
+
 	for (unsigned int i = 0; i < lines.size(); i++)
 	{
 		float curr_max = *std::max_element(lines[i].begin(), lines[i].end());
@@ -133,7 +133,9 @@ int main()
 	int num_hypothesis_15seq12 = 2;
 	int hypothesis_distance_15seq12 = 50;
 
+	int num_connections = 3;
 	int use_settings = 2;
+
 	if (use_settings  == 0)
 	{
 		num_hypothesis = num_hypothesis_new_college;
@@ -208,11 +210,14 @@ int main()
 		std::cout<<"\nstarting threshold: "<< threshold_string<<std::endl;
 		std::cout.flush();
 		start = std::clock();
-		for(std::vector<int>::size_type i = 0; i != lines.size(); i++)
-		{
-			std::cout<<"Processing: " << i << " out of " << lines.size() << std::endl;
-			dsp.update_graph(lines[i]);
-		}
+//		for(std::vector<int>::size_type i = 0; i != lines.size(); i++)
+//		{
+//			std::cout<<"Processing: " << i << " out of " << lines.size() << std::endl;
+//			dsp.update_graph(lines[i]);
+//		}
+
+		std::cout<<"Processing: ";
+		dsp.update_graph(lines);
 		std::vector<Path> paths = dsp.get_paths();
 		duration = ( std::clock() - start ) / (double) CLOCKS_PER_SEC;
 		std::cout<<"\nDuration: "<< duration <<std::endl;

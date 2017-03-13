@@ -28,6 +28,7 @@ namespace dynamic_shortest_path
 			void print_edges(int hyp);
 			std::vector<Path> get_paths();
 			void update_graph(std::vector<float> new_edges);
+			void update_graph(std::vector<std::vector<float> > graph);
 			int partial;
 			int full;
 		private:
@@ -41,7 +42,8 @@ namespace dynamic_shortest_path
 			std::vector<int> get_max_indices(std::vector<float> row, int num_indices);
 			std::vector<std::vector<std::vector<float> > > nodes;
 			std::vector<std::vector<std::vector<float> > > edges;
-			void forward_all(int hyp, int start, int end);
+			void forward_all(int hyp);
+			void forward_all(int hyp, int end);
 			void update_edges(std::vector<Path> discovered_paths, int hyp);
 			std::vector<bool> hidden_rows;
 			bool is_hidden_row(std::vector<float> row);
