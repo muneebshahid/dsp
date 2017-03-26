@@ -18,7 +18,7 @@ namespace dynamic_shortest_path
 	class Dsp
 	{
 		public:
-			Dsp(int num_hyp, int mult_hyp_dist, int num_connections, int width, int recalculation_threshold);
+			Dsp(int num_hyp, int mult_hyp_dist, int num_connections, int width, int recalculation_threshold, bool enable_side_connection);
 			virtual ~Dsp();
 			void forward(std::vector<float> new_edges, int hyp, bool append_edges);
 			Path backward();
@@ -32,7 +32,7 @@ namespace dynamic_shortest_path
 			int partial;
 			int full;
 		private:
-			std::vector<float> get_parents(int y, std::vector<float>::iterator it);
+			std::vector<float> get_parents(int y, std::vector<float>::iterator it, std::vector<float> nodes);
 			std::vector<float> get_parent_indices(int y);
 			std::vector<float> get_childern(int index);
 			int get_start_index(int row_num);
@@ -54,8 +54,9 @@ namespace dynamic_shortest_path
 			const int num_hyp;
 			const int mult_hyp_dist;
 			const int num_connections;
-			const int width;
+			const unsigned int width;
 			const int recalculation_threshold;
+			const bool enable_side_connection;
 	};
 } /* namespace dynamic_shortest_path */
 

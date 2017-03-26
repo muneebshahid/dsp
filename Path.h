@@ -21,20 +21,20 @@ class Path {
 public:
 	Path();
 	virtual ~Path();
-	std::vector<int> get_path();
+	std::vector<std::vector<int> > get_path();
 	std::vector<std::vector<int> > get_path(float threshold);
 	int size();
 	int get_length();
 	void print();
 	void print(bool print_hidden_rows);
-	void append(int step, float edge_value);
+	void append(int row, int col, float edge_value);
 	float get_cost();
-	int get_element(int i);
+	std::vector<int> get_element(int i);
 	void reverse();
 	void write_path(std::string save_path);
 	void write_path(std::string save_path, float threshold);
 private:
-	std::vector<int> path;
+	std::vector<std::vector<int> > path;
 	std::vector<float> edge_values;
 };
 

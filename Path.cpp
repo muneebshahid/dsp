@@ -18,9 +18,11 @@ namespace dynamic_shortest_path
 	{
 	}
 
-	void Path::append(int step, float edge_value)
+	void Path::append(int row, int col, float edge_value)
 	{
-		this->path.push_back(step);
+		this->path.push_back(std::vector<int> ());
+		this->path.back().push_back(row);
+		this->path.back().push_back(col);
 		this->edge_values.push_back(edge_value);
 	}
 
@@ -30,7 +32,7 @@ namespace dynamic_shortest_path
 		std::reverse(this->edge_values.begin(), this->edge_values.end());
 	}
 
-	std::vector<int> Path::get_path()
+	std::vector<std::vector<int> > Path::get_path()
 	{
 		return this->path;
 	}
@@ -38,10 +40,11 @@ namespace dynamic_shortest_path
 	std::vector<std::vector<int> > Path::get_path(float threshold)
 	{
 		std::vector<std::vector<int> > path;
-		for(unsigned int row = 0; row < this->path.size(); row++)
+		for(unsigned int element = 0; element < this->path.size(); element++)
 		{
-			int col = this->path[row];
-			float value = this->edge_values[row];
+			int row = this->path.at(element).at(0);
+			int col = this->path.at(element).at(1);
+			float value = this->edge_values.at(element);
 			if (threshold == NULL || value >= threshold)
 			{
 				path.push_back(std::vector<int>());
@@ -57,15 +60,15 @@ namespace dynamic_shortest_path
 		return this->path.size();
 	}
 
-	int Path::get_element(int i)
+	std::vector<int> Path::get_element(int i)
 	{
 		if (i >= 0)
 		{
-			return this->path[i];
+			return this->path.at(i);
 		}
 		else
 		{
-			return this->path[this->path.size() + i];
+			return this->path.at(this->path.size() + i);
 		}
 	}
 
@@ -79,7 +82,7 @@ namespace dynamic_shortest_path
 		std::ofstream f(save_path.c_str());
 		for(unsigned int i = 0; i < path.size(); i++)
 		{
-			f << this->path.at(i) << '\n';
+			f << this->path.at(i).at(1) << '\n';
 		}
 	}
 
@@ -96,9 +99,9 @@ namespace dynamic_shortest_path
 	void Path::print(bool print_hidden_rows)
 	{
 
-		for(std::vector<int>::iterator col = this->path.begin(); col != this->path.end(); ++col)
+		for(std::vector<std::vector<int> >::iterator ele = this->path.begin(); ele != this->path.end(); ++ele)
 		{
-			std::cout<<*col<<" ";
+			std::cout<<(*ele).at(0)<<" "<<(*ele).at(1)<<"\n";
 		}
 	}
 

@@ -11,12 +11,13 @@ namespace dynamic_shortest_path
 
 {
 
-	Dsp::Dsp(int num_hyp, int mult_hyp_dist, int num_connections, int width, int recalculation_threshold)
+	Dsp::Dsp(int num_hyp, int mult_hyp_dist, int num_connections, int width, int recalculation_threshold, bool enable_side_connection)
 				: num_hyp (num_hyp),
 				  mult_hyp_dist (mult_hyp_dist),
 				  num_connections (num_connections),
 				  width (width),
-				  recalculation_threshold (recalculation_threshold)
+				  recalculation_threshold (recalculation_threshold),
+				  enable_side_connection (enable_side_connection)
 	{
 		this->partial = 0;
 		this->full = 0;
@@ -43,10 +44,14 @@ namespace dynamic_shortest_path
 		return std::max(0, start_index);
 	}
 
-	std::vector<float> Dsp::get_parents(int y, std::vector<float>::iterator it)
+	std::vector<float> Dsp::get_parents(int y, std::vector<float>::iterator it, std::vector<float> nodes)
 	{
 		int start_index = this->get_start_index(y);
 		std::vector<float> parents(it + start_index, it + y + 1);
+		if (this->enable_side_connection && nodes.size() > 0 && y > 0)
+		{
+			parents.push_back(nodes.at(y - 1));
+		}
 		return parents;
 	}
 
@@ -105,9 +110,9 @@ namespace dynamic_shortest_path
 					curr_paths.push_back(this->backward(hyp));
 				}
 				else if ((this->paths.at(hyp - 1).size() > 1) &&
-						(std::abs(curr_paths.at(hyp - 1).get_element(-2) - this->paths.at(hyp - 1).get_element(-1))) <= this->recalculation_threshold)
+						(std::abs(curr_paths.at(hyp - 1).get_element(-2).at(1) - this->paths.at(hyp - 1).get_element(-1).at(1))) <= this->recalculation_threshold)
 				{
-					edges = this->modify_row(edges, curr_paths.at(hyp - 1).get_element(-1));
+					edges = this->modify_row(edges, curr_paths.at(hyp - 1).get_element(-1).at(1));
 					this->forward(edges, hyp, true);
 					curr_paths.push_back(this->backward(hyp));
 					this->partial++;
@@ -141,7 +146,7 @@ namespace dynamic_shortest_path
 				std::vector<float> nodes;
 				for(std::vector<int>::size_type i = 0; i != new_edges.size(); i++)
 				{
-					std::vector<float> parents = this->get_parents(i, this->nodes.at(hyp).back().begin());
+					std::vector<float> parents = this->get_parents(i, this->nodes.at(hyp).back().begin(), nodes);
 					nodes.push_back(*std::max_element(parents.begin(), parents.end()) + new_edges[i]);
 				}
 				this->append_to_graph(nodes, new_edges, hyp, append_edges);
@@ -170,10 +175,12 @@ namespace dynamic_shortest_path
 		this->edges.at(hyp) = this->edges.at(0);
 		for (unsigned int path_index = 0; path_index < discovered_paths.size(); path_index++)
 		{
-			std::vector<int> curr_path = discovered_paths.at(path_index).get_path();
+			std::vector<std::vector<int> > curr_path = discovered_paths.at(path_index).get_path();
 			for(unsigned int element = 0; element < curr_path.size(); element++)
 			{
-				this->edges.at(hyp).at(element) = this->modify_row(this->edges.at(hyp).at(element), curr_path.at(element));
+				int row = curr_path.at(element).at(0);
+				int col = curr_path.at(element).at(1);
+				this->edges.at(hyp).at(element) = this->modify_row(this->edges.at(hyp).at(row), col);
 			}
 		}
 	}
@@ -189,15 +196,33 @@ namespace dynamic_shortest_path
 		int last_row_index = this->nodes.at(hyp).size() - 1;
 		int max_index = this->get_max_index(hyp, last_row_index);
 		float value = this->edges.at(hyp).at(last_row_index).at(max_index);
-		path.append(max_index, value);
-		for (int row = last_row_index - 1; row >= 0; row--)
+		path.append(last_row_index, max_index, value);
+		for (int row = last_row_index; row > 0;)
 		{
-			int last_max_index = path.get_element(-1);
-			std::vector<float> parents = this->get_parents(last_max_index, this->nodes.at(hyp).at(row).begin());
+			int last_max_index = path.get_element(-1).at(1);
+			std::vector<float> parents = this->get_parents(last_max_index, this->nodes.at(hyp).at(row - 1).begin(), this->nodes.at(hyp).at(row));
 			std::reverse(parents.begin(), parents.end());
-			max_index = last_max_index - this->get_max_index(parents);
+			max_index = this->get_max_index(parents);
+			if (this->enable_side_connection && last_max_index > 0)
+			{
+				if (max_index == 0)
+				{
+					max_index = path.get_element(-1).at(1) - 1;
+				}
+				else
+				{
+					max_index = last_max_index - (max_index - 1);
+					row--;
+				}
+			}
+			else
+			{
+				max_index = last_max_index - max_index;
+				row--;
+			}
+
 			value = this->edges.at(hyp).at(row).at(max_index);
-			path.append(max_index, value);
+			path.append(row, max_index, value);
 		}
 		path.reverse();
 		return path;
@@ -214,7 +239,8 @@ namespace dynamic_shortest_path
 		float max = 0;
 		for(std::vector<float>::size_type i = 0; i != row.size(); i++)
 		{
-			if (row[i] > max)
+			float curr_val = row[i];
+			if (curr_val > max)
 			{
 				index = i;
 				max = row[i];
@@ -248,7 +274,7 @@ namespace dynamic_shortest_path
 			float max = 0;
 			for(std::vector<float>::size_type i = 0; i != row.size(); i++)
 			{
-				if (row[i] > max && index_far_enough(i, indices))
+				if (row[i] >= max && index_far_enough(i, indices))
 				{
 					curr_index = i;
 					max = row[i];

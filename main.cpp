@@ -27,8 +27,8 @@ std::vector<std::vector<float> > read_graph()
 //	std::ifstream scores("datasets/15seq2/normalized_scores_cell64.txt");
 //	std::ifstream scores("datasets/15seq2/hog64scores_normalized.txt");
 //	std::ifstream scores("datasets/15seq2/hog32scores_normalized.txt");
-//	std::ifstream scores("datasets/15seq2/normalized_scores.txt");
-	std::ifstream scores("datasets/seq1/normalized_scores.txt");
+	std::ifstream scores("datasets/15seq2/normalized_scores.txt");
+//	std::ifstream scores("datasets/seq1/normalized_scores.txt");
 //	std::ifstream scores("datasets/seq1/normalized_scores_old.txt");
 //	std::ifstream scores("datasets/seq1/hog32scores_normalized.txt");
 //	std::ifstream scores("datasets/seq1/hog64scores_normalized.txt");
@@ -128,14 +128,15 @@ int main()
 	int num_hypothesis_gp = 1;
 	int hypothesis_distance_gp = 10;
 
-	int num_hypothesis_default = 2;
+	int num_hypothesis_default = 1;
 	int hypothesis_distance_default = 3;
 
-	int num_hypothesis_15seq12 = 2;
+	int num_hypothesis_15seq12 = 1;
 	int hypothesis_distance_15seq12 = 50;
 
-	int num_connections = 3;
-	int use_settings = 2;
+	int num_connections = 4;
+	int use_settings = 5;
+	bool enable_side_connection = true;
 
 	if (use_settings  == 0)
 	{
@@ -195,7 +196,7 @@ int main()
 	float curr_threshold = threshold_min;
 	while (curr_threshold <= threshold_max)
 	{
-		Dsp dsp(num_hypothesis, hypothesis_distance, num_connections, lines[0].size(), recalculation_threshold);
+		Dsp dsp(num_hypothesis, hypothesis_distance, num_connections, lines[0].size(), recalculation_threshold, enable_side_connection);
 
 		stringstream tt;
 		tt << curr_threshold;
@@ -215,6 +216,7 @@ int main()
 //		{
 //			std::cout<<"Processing: " << i << " out of " << lines.size() << std::endl;
 //			dsp.update_graph(lines[i]);
+//			dsp.print_nodes(0);
 //		}
 
 		std::cout<<"Processing: ";
@@ -258,6 +260,7 @@ int main()
 //				curr_threshold += .01;
 //			}
 		}
+//		break;
 		curr_threshold += .02;
 	}
 	return 0;
